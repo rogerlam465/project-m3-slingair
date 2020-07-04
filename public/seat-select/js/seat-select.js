@@ -74,4 +74,13 @@ const handleConfirmSeat = (event) => {
   });
 };
 
-flightInput.addEventListener('blur', toggleFormContent);
+// step 1: fetch the flights
+// step 2: iterate through array, create elements
+// step 3: ???
+// step 4: profit
+
+
+// hmm. no. I don't care for this.
+
+// flightInput.addEventListener('blur', toggleFormContent);
+
