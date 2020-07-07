@@ -22,7 +22,17 @@ const renderSeats = (seatData) => {
       const seatAvailable = `<li><label class="seat"><input type="radio" name="seat" value="${seatNumber}" /><span id="${seatNumber}" class="avail">${seatNumber}</span></label></li>`;
 
       // TODO: render the seat availability based on the data...
-      seat.innerHTML = seatAvailable;
+
+      let result = seatData.find(obj => {
+        return obj.id === seatNumber;
+      })
+
+      if (result.isAvailable === true) {
+        seat.innerHTML = seatAvailable;
+      } else {
+        seat.innerHTML = seatOccupied;
+      }
+
       row.appendChild(seat);
     }
   }
