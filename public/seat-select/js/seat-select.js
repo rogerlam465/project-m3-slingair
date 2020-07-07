@@ -4,7 +4,7 @@ const confirmButton = document.getElementById('confirm-button');
 
 let selection = '';
 
-const renderSeats = () => {
+const renderSeats = (seatData) => {
   document.querySelector('.form-container').style.display = 'block';
 
   const alpha = ['A', 'B', 'C', 'D', 'E', 'F'];
@@ -45,18 +45,35 @@ const renderSeats = () => {
 
 const toggleFormContent = (event) => {
   const flightNumber = flightInput.value;
+
+  // validate flight number: 'SA###' is desired format
+  // this feels quick-and-dirty, but I suspect it'll do the job.
+
+  const initialLetters = flightNumber[0] + flightNumber[1];
+
+  const endDigits = Number(flightNumber[2] + flightNumber[3] + flightNumber[4]);
+
+  if (initialLetters != "SA" || endDigits === NaN) {
+    // you attempted to access the endpoint directly
+    // and you did it with an incorrect flight number
+    // you utter buffoon
+    res.status(404).redirect("/seat-select");
+  }
+
   console.log('toggleFormContent: ', flightNumber);
-  fetch(`/flights/${flightNumber}`)
+
+  let seatData = fetch(`/slingair/flights/${flightNumber}`)
     .then((res) => res.json())
     .then((data) => {
-      console.log(data);
+      renderSeats(data);
     });
+
   // TODO: contact the server to get the seating availability
   //      - only contact the server if the flight number is this format 'SA###'.
   //      - Do I need to create an error message if the number is not valid?
 
   // TODO: Pass the response data to renderSeats to create the appropriate seat-type.
-  renderSeats();
+  // renderSeats();
 };
 
 const handleConfirmSeat = (event) => {
@@ -79,8 +96,20 @@ const handleConfirmSeat = (event) => {
 // step 3: ???
 // step 4: profit
 
+// ok, this works now. Nice.
 
-// hmm. no. I don't care for this.
+const populateFlightSelect = async () => {
+  let flightsResponse = await fetch('/slingair/flights')
+  let flightsArr = await flightsResponse.json();
 
-// flightInput.addEventListener('blur', toggleFormContent);
+  flightsArr.forEach((flight) => {
+    let option = document.createElement("option");
+    option.setAttribute("value", flight);
+    option.innerHTML = flight;
+    document.querySelector("#flight").append(option);
+  })
+};
 
+populateFlightSelect();
+
+flightInput.addEventListener('change', toggleFormContent);
