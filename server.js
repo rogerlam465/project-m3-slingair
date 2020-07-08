@@ -3,6 +3,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+const { v4: uuidv4 } = require('uuid');
+
 const { flights } = require('./test-data/flightSeating');
 const { reservations, clients } = require('./test-data/reservations');
 
@@ -51,7 +53,30 @@ const getAllUsers = (req, res) => {
 }
 
 const addUser = (req, res) => {
-  // creates a new user/reservation
+  // creates a new user
+
+  let newUser = {
+    surname: req.body.surname,
+    givenName: req.body.givenName,
+    email: req.body.email,
+    id: uuidv4(),
+  }
+
+  clients.push(newUser);
+
+  // I mean, this is great, but we also need to save the reservation info
+  // so let's create a new reservation, I guess.
+
+  let newReservation = {
+    id: uuidv4(),
+    flight: req.body.flight,
+    seat: req.body.seat,
+    clientId: newUser.id,
+  }
+
+  reservations.push(newReservation);
+
+  res.sendFile('/seat-select/confirmed.html');
 }
 
 // express starts here, obvs

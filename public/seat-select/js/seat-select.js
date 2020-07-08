@@ -66,7 +66,7 @@ const toggleFormContent = (event) => {
   if (initialLetters != "SA" || endDigits === NaN) {
     // you attempted to access the endpoint directly
     // and you did it with an incorrect flight number
-    // you utter buffoon
+    // nope!
     res.status(404).redirect("/seat-select");
   }
 
@@ -83,16 +83,22 @@ const toggleFormContent = (event) => {
   //      - Do I need to create an error message if the number is not valid?
 
   // TODO: Pass the response data to renderSeats to create the appropriate seat-type.
-  // renderSeats();
 };
 
 const handleConfirmSeat = (event) => {
   event.preventDefault();
+
+  let pickedSeat = document.getElementById('seat-number').innerText.slice(1, 3);
+
   // TODO: everything in here!
-  fetch('/users', {
+  fetch('/slingair/users', {
     method: 'POST',
     body: JSON.stringify({
       givenName: document.getElementById('givenName').value,
+      surname: document.getElementById('surname').value,
+      email: document.getElementById('email').value,
+      seat: pickedSeat,
+      flight: document.getElementById('flight').value,
     }),
     headers: {
       Accept: 'application/json',
