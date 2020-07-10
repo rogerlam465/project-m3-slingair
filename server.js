@@ -76,7 +76,14 @@ const addUser = (req, res) => {
 
   reservations.push(newReservation);
 
-  res.sendFile('/seat-select/confirmed.html');
+  res.send(newReservation.id);
+}
+
+const handleConfirmation = (resData) => {
+  let reservationData = reservations.find(obj => obj.id === resData);
+  let clientData = clients.find(obj => obj.id === reservationData.clientId);
+  let dataArray = [reservationData, clientData];
+  return dataArray;
 }
 
 // express starts here, obvs
@@ -94,13 +101,20 @@ express()
   .use(express.static('public'))
   .use(bodyParser.json())
   .use(express.urlencoded({ extended: false }))
+  .set('view engine', 'ejs')
 
   // endpoints
 
+  .get('/slingair', (req, res) => res.render('index'))
+  .get('/slingair/confirmed/:id', (req, res) => {
+    let dataHolder = handleConfirmation(req.params.id);
+    res.render('confirmed', { flightInfo: dataHolder[0], clientInfo: dataHolder[1] })
+  })
   .get('/slingair/flights', getFlightNums)
   .get('/slingair/flights/:flight', returnFlightInfo)
   .get('/slingair/users', getAllUsers) //Accepts query params of `limit` and `start` for pagination. _If values are not provided, it will return the first 10 users_
   .post('/slingair/users', addUser)
   .get('/flights/:flightNumber', handleFlight)
+  .get('/', (req, res) => res.send("nothing"))
   .use((req, res) => res.send('Not Found'))
   .listen(PORT, () => console.log(`Listening on port ${PORT}`));

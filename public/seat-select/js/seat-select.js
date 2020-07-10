@@ -85,13 +85,34 @@ const toggleFormContent = (event) => {
   // TODO: Pass the response data to renderSeats to create the appropriate seat-type.
 };
 
-const handleConfirmSeat = (event) => {
+const handleConfirmSeat = async (event) => {
   event.preventDefault();
 
   let pickedSeat = document.getElementById('seat-number').innerText.slice(1, 3);
 
   // TODO: everything in here!
-  fetch('/slingair/users', {
+
+  // fetch *always* returns a promise; the server doesn't give a crap about whether
+  // it's post or get or whatever; that's just syntactic sugar for frail humans.
+
+  // let flightId = fetch('/slingair/users', {
+  //   method: 'POST',
+  //   body: JSON.stringify({
+  //     givenName: document.getElementById('givenName').value,
+  //     surname: document.getElementById('surname').value,
+  //     email: document.getElementById('email').value,
+  //     seat: pickedSeat,
+  //     flight: document.getElementById('flight').value,
+  //   }),
+  //   headers: {
+  //     Accept: 'application/json',
+  //     'Content-Type': 'application/json',
+  //   },
+  // })
+  //   .then(response => response.text())
+  //   .then(data => { return data });
+
+  let response = await fetch('/slingair/users', {
     method: 'POST',
     body: JSON.stringify({
       givenName: document.getElementById('givenName').value,
@@ -105,6 +126,10 @@ const handleConfirmSeat = (event) => {
       'Content-Type': 'application/json',
     },
   });
+
+  let flightId = await response.text();
+
+  window.location.assign('/slingair/confirmed/' + flightId);
 };
 
 // step 1: fetch the flights
@@ -113,6 +138,10 @@ const handleConfirmSeat = (event) => {
 // step 4: profit
 
 // ok, this works now. Nice.
+
+// ok, this doesn't quite work right. For starters, it doesn't
+// automatically populate. Second, it doesn't wipe and re-start
+// if you choose the default flight. That's not optimal.
 
 const populateFlightSelect = async () => {
   let flightsResponse = await fetch('/slingair/flights')
