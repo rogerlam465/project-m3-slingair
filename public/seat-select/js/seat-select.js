@@ -8,6 +8,9 @@ const renderSeats = (seatData) => {
   document.querySelector('.form-container').style.display = 'block';
 
   const alpha = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+  seatsDiv.innerHTML = "";
+
   for (let r = 1; r < 11; r++) {
     const row = document.createElement('ol');
     row.classList.add('row');
@@ -95,23 +98,6 @@ const handleConfirmSeat = async (event) => {
   // fetch *always* returns a promise; the server doesn't give a crap about whether
   // it's post or get or whatever; that's just syntactic sugar for frail humans.
 
-  // let flightId = fetch('/slingair/users', {
-  //   method: 'POST',
-  //   body: JSON.stringify({
-  //     givenName: document.getElementById('givenName').value,
-  //     surname: document.getElementById('surname').value,
-  //     email: document.getElementById('email').value,
-  //     seat: pickedSeat,
-  //     flight: document.getElementById('flight').value,
-  //   }),
-  //   headers: {
-  //     Accept: 'application/json',
-  //     'Content-Type': 'application/json',
-  //   },
-  // })
-  //   .then(response => response.text())
-  //   .then(data => { return data });
-
   let response = await fetch('/slingair/users', {
     method: 'POST',
     body: JSON.stringify({
@@ -139,10 +125,6 @@ const handleConfirmSeat = async (event) => {
 
 // ok, this works now. Nice.
 
-// ok, this doesn't quite work right. For starters, it doesn't
-// automatically populate. Second, it doesn't wipe and re-start
-// if you choose the default flight. That's not optimal.
-
 const populateFlightSelect = async () => {
   let flightsResponse = await fetch('/slingair/flights')
   let flightsArr = await flightsResponse.json();
@@ -153,6 +135,15 @@ const populateFlightSelect = async () => {
     option.innerHTML = flight;
     document.querySelector("#flight").append(option);
   })
+
+  console.log(flightsArr);
+
+  await fetch(`/slingair/flights/${flightsArr[0]}`)
+    .then((res) => res.json())
+    .then((data) => {
+      renderSeats(data);
+    });
+
 };
 
 populateFlightSelect();

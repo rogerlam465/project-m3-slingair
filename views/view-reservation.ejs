@@ -14,7 +14,23 @@
             <h1 class='header-logo'>Air Slingshot</h1>
     </div>
     <div class="content">
+        <div class="form-container">
+            <h2>Enter your reservation ID!</h2>
+            <form id="reservationSearch" class="content" name="salesForm" onsubmit="findReservation(event)">
+                <div class="form-content user">
 
+                    <div class='form-item'>
+                        <label for="reservationId">Reservation ID</label>
+                        <input id="reservationId" type="text" name="reservationId" placeholder="Your reservation ID"
+                            required />
+                    </div>
+                    <button class='button confirm' id='confirm-button'>
+                        <div class="lds-dual-ring"></div>
+                        Search
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
     </div>
     <p class='footer-logo'>The only way to fly!</p>
